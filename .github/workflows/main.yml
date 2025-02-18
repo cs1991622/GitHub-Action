@@ -1,0 +1,35 @@
+name: CI/CD Pipeline  # 工作流程名称
+
+on:  # 触发条件
+  push:
+    branches: [ main ]  # 在main分支push时触发
+  pull_request:
+    branches: [ main ]  # 针对main分支的PR触发
+
+jobs:  # 定义任务
+  build-and-deploy:
+    runs-on: ubuntu-latest  # 运行环境
+
+    steps:
+    # 检出代码
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    # 设置Node.js环境
+    - name: Setup Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '14'  # 指定Node.js版本
+
+    # 安装依赖并构建
+    - name: Install dependencies and build
+      run: |
+        npm install
+        npm run build  # 假设项目有build脚本生成静态文件
+
+    # 部署到GitHub Pages
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}  # 自动生成的令牌
+        publish_dir: ./dist  # 部署的目录（根据项目调整）
